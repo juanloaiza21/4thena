@@ -3,6 +3,7 @@ import os
 from google import genai
 from dotenv import load_dotenv
 from typing import Optional, Any
+from colorama import Fore
 
 class LLMinteractor:
     def __init__(self, api_key: str | None = None):
@@ -24,6 +25,9 @@ class LLMinteractor:
                 contents=prompt,
                 **kwargs
             )
+            if llm_response.text is None:
+                print(f"{Fore.RED}Response from LLM is empty")
+                return ""
             return llm_response.text
         except Exception as e:
             # print(e)

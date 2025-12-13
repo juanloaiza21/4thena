@@ -1,9 +1,6 @@
-import os
 from typing import List
-from dotenv import load_dotenv
 from google import genai
-
-load_dotenv()
+import os
 
 
 class EmbeddingsService:

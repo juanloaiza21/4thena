@@ -7,7 +7,7 @@ class MerchantIDIdentifier:
         self.embeddings_service = EmbeddingsService()
         self.llm = LLMinteracclient()
 
-    def identify_merchant_id(self, content: List[dict] | str) -> str:
+    def identifyMerchantId(self, content: List[dict] | str) -> str:
         send_content = [{"role": "system", "parts": [{"text": ID_REQUEST}]}]
 
         if isinstance(content, str):
@@ -17,5 +17,5 @@ class MerchantIDIdentifier:
 
         return self.llm.generate(send_content)
 
-    def identify_merchant_id_embedding(self, content: List[dict] | str) -> str:
-        return self.embeddings_service.createEmbedding(self.identify_merchant_id(content))
+    def identifyMerchantIdEmbedding(self, content: List[dict] | str) -> str:
+        return self.embeddings_service.createEmbedding(self.identifyMerchantId(content))

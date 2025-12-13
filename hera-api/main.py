@@ -1,10 +1,13 @@
 import asyncio
 import colorama
 from colorama import Fore
+from dotenv import load_dotenv
 
 from manager.load_config import CONFIG
 from service.nats_consumer import NATSConsumer
 from milvus.milvus import Milvus
+
+load_dotenv()
 
 colorama.init(autoreset=True)
 
