@@ -1,5 +1,2 @@
-google-generativeai
-python-dotenv
+google-genai
 PyYAML
-nats-py
-colorama
