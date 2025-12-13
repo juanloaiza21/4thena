@@ -25,4 +25,9 @@ export class WhatsappController {
     async getMessages(@Query() getMessagesDto: GetMessagesDto) {
         return this.whatsappService.getMessagesFromNumber(getMessagesDto);
     }
+
+    @Get('saved-messages')
+    async getSavedMessages() {
+        return this.whatsappService.getAllMessages();
+    }
 }
