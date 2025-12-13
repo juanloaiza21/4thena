@@ -9,7 +9,7 @@ class Summarizer:
 
     def summarize(self, content: List[dict] | str) -> str:
 
-        send_content = [{"role": "system", "parts": [{"text": SUMMARY_PROMPT}]}]
+        send_content = [{"role": "model", "parts": [{"text": SUMMARY_PROMPT}]}]
 
         if isinstance(content, str):
             send_content += [{"role": "user", "parts": [{"text": content}]}]
@@ -18,6 +18,5 @@ class Summarizer:
 
         return self.llm.generate(send_content)
     
-    def embedSummary(self, content: List[dict] | str) -> List[float]:
         summary = self.summarize(content)
         return EmbeddingsService().createEmbedding(summary)

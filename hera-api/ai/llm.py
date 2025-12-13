@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from typing import Optional, Any
 from colorama import Fore
 
+load_dotenv()
 class LLMinteractor:
     def __init__(self, api_key: str | None = None):
         """
@@ -30,5 +31,5 @@ class LLMinteractor:
                 return ""
             return llm_response.text
         except Exception as e:
-            # print(e)
+            print(e)
             return "An error occurred while processing your request with the LLM."
