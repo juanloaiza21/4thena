@@ -1,0 +1,3 @@
+nats:
+  servers: ["nats://nats-mq:4222"]
+  subject: ["hera.new.msgs"]

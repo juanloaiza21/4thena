@@ -1,36 +1,32 @@
-from typing import Dict
+import asyncio
+import colorama
+from colorama import Fore
 
 from manager.load_config import CONFIG
-
-from fastapi import FastAPI, Request
-from fastapi.middleware.cors import CORSMiddleware
-
-import colorama
+from service.nats_consumer import NATSConsumer
 
 colorama.init(autoreset=True)
 
-app = FastAPI() # DEVELOPMENT
+async def main():
+    print(f"{Fore.BLUE}Starting Hera API NATS Consumer...")
+    
+    if CONFIG is None:
+        print(f"{Fore.RED}Error: 'config.yaml' is empty or invalid.")
+        return
 
-origins = ["*"]  # CHANGE IN PROD ENV
+    if 'nats' not in CONFIG:
+        print(f"{Fore.RED}Error: 'nats' section missing in config.yaml")
+        return
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+    nats_config = CONFIG['nats']
+    servers = nats_config.get('servers', ["nats://localhost:4222"])
+    subject = nats_config.get('subject', ["hera.new.msgs"])
 
+    consumer = NATSConsumer(servers, subject)
+    await consumer.run()
 
-# Create persistence connection pools
-@app.on_event("startup")
-def create_persistence_connection_pools() -> None:
-    pass
-
-
-@app.on_event("shutdown")
-def close_mysql_connection_pool() -> None:
-    pass
-
-# Add routers
-app.include_router(auth.router, prefix="/auth")
+if __name__ == "__main__":
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print(f"\n{Fore.YELLOW}Shutting down...")
