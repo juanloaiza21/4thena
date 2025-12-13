@@ -3,4 +3,7 @@ export default () => ({
     database: {
         MONGO_URI: process.env.MONGO_URI,
     },
+    mq: {
+        NATS_URI: process.env.NATS_URI,
+    },
 });

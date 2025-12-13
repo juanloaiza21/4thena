@@ -7,9 +7,10 @@ import { DatabaseModule } from './database/database.module';
 
 import { AppConfigModule } from './config/config.module';
 import { WhatsappModule } from './whatsapp/whatsapp.module';
+import { NatsModule } from './nats/nats.module';
 
 @Module({
-  imports: [AppConfigModule, DatabaseModule, WhatsappModule],
+  imports: [AppConfigModule, DatabaseModule, WhatsappModule, NatsModule],
   controllers: [AppController],
   providers: [AppService, DatabaseService],
 })
