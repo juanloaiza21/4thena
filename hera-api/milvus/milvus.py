@@ -16,7 +16,7 @@ class Milvus:
             self.client = MilvusClient(
                 uri=self.uri
             )
-            await self.client.list_collections()
+            _ = self.client.list_collections()
         except Exception as e:
             print(f"{Fore.RED}Couldn't establish milvus connection")
             raise e
@@ -25,7 +25,7 @@ class Milvus:
             print(f"{Fore.BLUE}Milvus collection {self.collection} doesn't exist, creatuing now")
             self.client.create_collection(
                 collection_name=self.collection,
-                schema=IDENTIFYING_MSG_SCHEMA, # type: ignore
+                schema=IDENTIFYING_MSG_SCHEMA,
                 metric_type="COSINE"
             )
             print(f"{Fore.GREEN}Milvus collection {self.collection} created successfully")
