@@ -11,3 +11,5 @@ results*
 data/
 pyrightconfig.json
 data/
+
+.env

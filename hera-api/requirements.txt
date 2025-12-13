@@ -1,3 +1,5 @@
-nats-py
+google-generativeai
+python-dotenv
 PyYAML
+nats-py
 colorama
