@@ -1,0 +1,19 @@
+meta {
+  name: WhastappMock
+  type: http
+  seq: 11
+}
+
+get {
+  url: http://localhost:8000/whatsapp/messages?count=10
+  body: none
+  auth: inherit
+}
+
+params:query {
+  count: 10
+}
+
+settings {
+  encodeUrl: true
+}

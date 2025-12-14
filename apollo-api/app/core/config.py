@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     TWILIO_APP_SID: str
     NGROK_URL: str | None = None
     MEETING_BAAS_API_KEY: str | None = None
+    GEMINI_API_KEY: str | None = None
     
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
