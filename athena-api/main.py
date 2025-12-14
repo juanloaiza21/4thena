@@ -1,9 +1,14 @@
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from typing import Dict
 
 from manager.load_config import CONFIG
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from endpoints import query, contract, merchants
 
 import colorama
 
@@ -33,4 +38,6 @@ def close_mysql_connection_pool() -> None:
     pass
 
 # Add routers
-app.include_router(auth.router, prefix="/auth")
+app.include_router(query.router)
+app.include_router(contract.router)
+app.include_router(merchants.router)

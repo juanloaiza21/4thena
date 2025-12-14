@@ -5,12 +5,13 @@ from dotenv import load_dotenv
 import os
 
 from manager.load_config import CONFIG
+
 from service.nats_consumer import NATSConsumer
 from milvus.milvus import Milvus
 from service.merchant_id_identifier import MerchantIDIdentifier
 from ai.embeddings import EmbeddingsService
 from ai.llm import LLMinteractor
-from natsServ.producer import NatsProducer
+from service.summarizer import Summarizer
 
 load_dotenv()
 
@@ -40,21 +41,19 @@ async def main():
     embeddings_service = EmbeddingsService(gemini_api_key)
 
     merchant_id_identifier = MerchantIDIdentifier(llm, embeddings_service)
+    summarizer = Summarizer(llm, embeddings_service)
 
     milvus_config = CONFIG["milvus"]
-    milvus_client = Milvus(milvus_config["uri"], milvus_config["collection"])
+    milvus_client = Milvus(milvus_config["uri"], milvus_config["identify_collection"], milvus_config["rag_collection"])
 
-    nats_config = CONFIG['nats']
-    servers = nats_config.get('servers', ["nats://localhost:4222"])
-    subject = nats_config.get('subject', ["hera.new.msgs"])
+    nats_config = CONFIG["nats"]
+    server = nats_config.get("server", "nats://nats-mq:4222")
+    consumer_subject = nats_config.get("consumer_subject", "hermes.ratified.msgs")
 
-    producer_server = nats_config.get('servers', ["nats://localhost:4222"])[0]
-    producer_subject = nats_config.get("producer_subject", "her.predict.id")
+    consumer = NATSConsumer(server, consumer_subject, milvus_client, merchant_id_identifier, summarizer)
 
-    nats_producer = NatsProducer(producer_server, producer_subject)
-
-    consumer = NATSConsumer(servers, subject, milvus_client, merchant_id_identifier, nats_producer)
     await consumer.run()
+
 
 if __name__ == "__main__":
     try:
