@@ -16,6 +16,7 @@ class NatsConsumer:
         )
 
     async def handle_message(self, msg):
+        print(msg)
         payload = json.loads(msg.data.decode())
         print(f'Received payload: {payload}')
         await self.repo.set_merchant_id(
