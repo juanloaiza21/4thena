@@ -1,60 +1,55 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { SearchPage } from "@/components/search-page"
 import { ChatPage } from "@/components/chat-page"
-
-// Mock merchant data for demonstration
-const MOCK_MERCHANTS = [
-  {
-    id: "1",
-    name: "Amazon",
-    category: "E-commerce",
-    description: "Global online marketplace and technology company",
-  },
-  {
-    id: "2",
-    name: "Stripe",
-    category: "Payment Processing",
-    description: "Online payment processing platform for internet businesses",
-  },
-  {
-    id: "3",
-    name: "Shopify",
-    category: "E-commerce Platform",
-    description: "Commerce platform for online stores and retail point-of-sale systems",
-  },
-  {
-    id: "4",
-    name: "PayPal",
-    category: "Digital Payments",
-    description: "Digital payments and money transfer service",
-  },
-  {
-    id: "5",
-    name: "Square",
-    category: "Payment Solutions",
-    description: "Financial services and mobile payment company",
-  },
-]
+import { getMerchants } from "@/lib/api"
 
 export default function Home() {
-  const [selectedMerchant, setSelectedMerchant] = useState<(typeof MOCK_MERCHANTS)[0] | null>(null)
+  const [selectedMerchant, setSelectedMerchant] = useState<string | null>(null)
+  const [merchants, setMerchants] = useState<string[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
-  const handleMerchantSelect = (merchant: (typeof MOCK_MERCHANTS)[0]) => {
-    setSelectedMerchant(merchant)
+  useEffect(() => {
+    const fetchMerchants = async () => {
+      try {
+        const data = await getMerchants()
+        setMerchants(data)
+      } catch (error) {
+        console.error("Failed to load merchants", error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchMerchants()
+  }, [])
+
+  const handleMerchantSelect = (merchantName: string) => {
+    setSelectedMerchant(merchantName)
   }
 
   const handleBackToSearch = () => {
     setSelectedMerchant(null)
   }
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="animate-pulse flex flex-col items-center">
+          <div className="w-12 h-12 bg-primary/20 rounded-full mb-4"></div>
+          <div className="text-muted-foreground">Loading...</div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <main className="min-h-screen bg-background">
       {!selectedMerchant ? (
-        <SearchPage merchants={MOCK_MERCHANTS} onMerchantSelect={handleMerchantSelect} />
+        <SearchPage merchants={merchants} onMerchantSelect={handleMerchantSelect} />
       ) : (
-        <ChatPage merchant={selectedMerchant} onBack={handleBackToSearch} />
+        <ChatPage merchantName={selectedMerchant} onBack={handleBackToSearch} />
       )}
     </main>
   )
