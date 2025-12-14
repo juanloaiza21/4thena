@@ -2,4 +2,4 @@ from pydantic import BaseModel
 
 
 class RatifyMessageDto(BaseModel):
-    messageId: str
+    message_id: str

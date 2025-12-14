@@ -20,11 +20,11 @@ class MessageService(BaseService):
         message_data = await repository.get_by_id(msg_id)
         
         if not message_data:
-            return {"error": "Message not found", "messageId": msg_id}
+            return {"error": "Message not found", "message_id": msg_id}
             
         merchant_id = message_data.get("merchantId")
         if not merchant_id:
-             return {"error": "Message does not have a merchantId", "messageId": msg_id}
+             return {"error": "Message does not have a merchantId", "message_id": msg_id}
         
         # Mark as ratified in database
         await repository.mark_as_ratified(msg_id)

@@ -27,7 +27,7 @@ class MessageController:
         """
         Ratify a message
         """
-        return await self.service.ratify_message(body.messageId)
+        return await self.service.ratify_message(body.message_id)
 
     @controller.route.get("/list", responses={200: {"description": "List of messages"}})
     async def list_messages(self):
