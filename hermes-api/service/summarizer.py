@@ -4,11 +4,11 @@ from ai.embeddings import EmbeddingsService
 from ai.prompts import SUMMARY_PROMPT
 
 class Summarizer:
-    def __init__(self, llm: LLMinteractor):
+    def __init__(self, llm: LLMinteractor, embeddings_service: EmbeddingsService):
         self.llm = llm
+        self.embeddings_service = embeddings_service
 
     def summarize(self, content: List[dict] | str) -> str:
-
         send_content = [{"role": "model", "parts": [{"text": SUMMARY_PROMPT}]}]
 
         if isinstance(content, str):

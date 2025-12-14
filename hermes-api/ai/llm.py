@@ -3,6 +3,7 @@ import os
 from google import genai
 from dotenv import load_dotenv
 from typing import Optional, Any
+from colorama import Fore
 
 load_dotenv()
 class LLMinteractor:
@@ -26,8 +27,9 @@ class LLMinteractor:
                 **kwargs
             )
             if llm_response.text is None:
+                print(f"{Fore.RED}Response from LLM is empty")
                 return ""
             return llm_response.text
         except Exception as e:
-            # print(e)
+            print(e)
             return "An error occurred while processing your request with the LLM."
