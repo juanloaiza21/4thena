@@ -10,7 +10,7 @@ from milvus.milvus import Milvus
 from service.merchant_id_identifier import MerchantIDIdentifier
 from ai.embeddings import EmbeddingsService
 from ai.llm import LLMinteractor
-from nats.producer import NatsProducer
+from natsServ.producer import NatsProducer
 
 load_dotenv()
 

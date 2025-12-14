@@ -8,7 +8,9 @@ class NatsProducer:
         self.nc = None
 
     async def connect(self):
+        print(f"{Fore.BLUE}Attempting connection to nats server {self.server} for publishing")
         self.nc = await nats.connect(self.server) #type: ignore
+        print(f"{Fore.GREEN}connection with NATS server {self.server} for publishing successful")
     
     async def publish(self, msg: str):
         if self.nc is None:
