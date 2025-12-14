@@ -1,6 +1,6 @@
 from enum import Enum
 from pydantic import BaseModel
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 
 
 class MessageSource(str, Enum):
@@ -12,5 +12,6 @@ class MessageSource(str, Enum):
 
 class Message(BaseModel):
     source: MessageSource
-    content: Dict[str, Any]
+    txt: Dict[str, Any]
+    merchant_id: str
     ratified: bool = False
