@@ -15,7 +15,7 @@ ___
 ├── hera-api
 ├── chronos-worker
 ├── hermes-api
-└── integration-api
+└── tartarus-api
 ```
 
 Each folder in this project is named after a greek god who's mythos is relevant to the service's role and function within the project.
@@ -40,3 +40,6 @@ Hephaestus god of blacksmiths is in charge of fixing and ratifying the correspon
 
 #### Cronos
 Cronos titan of time recieves information from Apollo and carefully controls it's timing to launch it towards our other services in order to be indexed and saved in our databases. Cronos saves our information in temporary non ratified storage on our MongoDB and finally tells Hera to predict the merchant ids corresponding to the info.
+
+#### Tartarus
+A dark god we don't talk about. To behold his code is to risk insanity. To open his files is to delve into regret.
