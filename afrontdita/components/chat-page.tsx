@@ -1,42 +1,43 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useRef, useEffect } from "react"
-import { ArrowLeft, Send } from "lucide-react"
+import { ArrowLeft, Send, Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ChatMessage } from "@/components/chat-message"
 import { MerchantSidebar } from "@/components/merchant-sidebar"
 import { EmptyChat } from "@/components/empty-chat"
 import { Logo } from "@/components/logo"
-
-interface Merchant {
-  id: string
-  name: string
-  category: string
-  description: string
-}
+import { useMobile } from "@/hooks/use-mobile"
+import { sendQuery } from "@/lib/api"
 
 interface Message {
   id: string
-
-
-  role: "user" | "model"
+  role: "user" | "assistant"
   content: string
   timestamp: Date
 }
 
 interface ChatPageProps {
-  merchant: Merchant
+  merchantName: string
   onBack: () => void
 }
 
-export function ChatPage({ merchant, onBack }: ChatPageProps) {
+export function ChatPage({ merchantName, onBack }: ChatPageProps) {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const isMobile = useMobile()
+
+  // Auto-close sidebar on mobile
+  useEffect(() => {
+    if (isMobile) {
+      setIsSidebarOpen(false)
+    }
+  }, [isMobile])
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -62,22 +63,39 @@ export function ChatPage({ merchant, onBack }: ChatPageProps) {
     setInput("")
     setIsLoading(true)
 
-    // Simulate AI response (replace with actual API call)
-    setTimeout(() => {
-      const modelMessage: Message = {
+    try {
+      // Build context from previous messages
+      const context = messages
+        .map((msg) => `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`)
+        .join("\n")
+
+      const responseText = await sendQuery(merchantName, userMessage.content, context)
+
+      const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
-        role: "model",
-        content: `I understand you're asking about ${merchant.name}. Based on the available data, ${merchant.name} is a ${merchant.category.toLowerCase()} with 2929 transactions and a volume of 2020. How else can I help you analyze this merchant?`,
+        role: "assistant",
+        content: responseText,
         timestamp: new Date(),
       }
-      setMessages((prev) => [...prev, modelMessage])
+      setMessages((prev) => [...prev, assistantMessage])
+    } catch (error) {
+      console.error("Failed to get response", error)
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: "Sorry, I had trouble connecting to the server. Please try again.",
+        timestamp: new Date(),
+      }
+      setMessages((prev) => [...prev, errorMessage])
+    } finally {
       setIsLoading(false)
-    }, 1000)
+    }
   }
 
   return (
     <div className="h-screen flex flex-col">
-      <header className="border-b bg-card/50 backdrop-blur-sm z-20 shrink-0 sticky top-0">
+      {/* Header */}
+      <header className="border-b bg-card/50 backdrop-blur-sm z-20 shrink-0">
         <div className="container mx-auto px-4 py-3 flex items-center gap-3">
           <Button variant="ghost" size="icon" onClick={onBack} className="shrink-0" aria-label="Back to search">
             <ArrowLeft className="h-5 w-5" />
@@ -86,9 +104,18 @@ export function ChatPage({ merchant, onBack }: ChatPageProps) {
           <Logo />
 
           <div className="flex-1 min-w-0">
-            <h1 className="text-lg font-semibold text-foreground truncate">{merchant.name}</h1>
-            <p className="text-xs text-muted-foreground truncate">{merchant.category}</p>
+            <h1 className="text-lg font-semibold text-foreground truncate">{merchantName}</h1>
           </div>
+
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="shrink-0 lg:hidden"
+            aria-label={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
+          >
+            {isSidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </Button>
         </div>
       </header>
 
@@ -100,7 +127,7 @@ export function ChatPage({ merchant, onBack }: ChatPageProps) {
           <div className="flex-1 overflow-y-auto">
             <div className="container mx-auto px-4 py-6 max-w-3xl">
               {messages.length === 0 ? (
-                <EmptyChat merchantName={merchant.name} />
+                <EmptyChat merchantName={merchantName} />
               ) : (
                 <div className="space-y-4">
                   {messages.map((message) => (
@@ -130,7 +157,7 @@ export function ChatPage({ merchant, onBack }: ChatPageProps) {
                 <Input
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder={`Ask anything about ${merchant.name}...`}
+                  placeholder={`Ask anything about ${merchantName}...`}
                   disabled={isLoading}
                   className="flex-1 bg-background"
                   aria-label="Message input"
@@ -143,7 +170,8 @@ export function ChatPage({ merchant, onBack }: ChatPageProps) {
           </div>
         </div>
 
-        <MerchantSidebar merchant={merchant} />
+        {/* Sidebar */}
+        <MerchantSidebar merchantName={merchantName} isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       </div>
     </div>
   )

@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: http://127.0.0.1:8000/query
+  url: http://127.0.0.1:7000/query
   body: json
   auth: inherit
 }
@@ -17,7 +17,7 @@ headers {
 
 body:json {
   {
-    "prompt_msg": "string",
+    "prompt_msg": "Please tell me what is Rappi?",
     "context": "string",
     "merchant_id": "string"
   }
@@ -25,4 +25,5 @@ body:json {
 
 settings {
   encodeUrl: false
+  timeout: 0
 }

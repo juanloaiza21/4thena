@@ -1,63 +1,48 @@
 "use client"
 
-import { useState } from "react"
-import { ChevronRight, ChevronLeft } from "lucide-react"
+import { X } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { cn } from "@/lib/utils"
-
-interface Merchant {
-  id: string
-  name: string
-  category: string
-  description: string
-}
 
 interface MerchantSidebarProps {
-  merchant: Merchant
+  merchantName: string
+  isOpen: boolean
+  onClose: () => void
 }
 
-export function MerchantSidebar({ merchant }: MerchantSidebarProps) {
-  const [isCollapsed, setIsCollapsed] = useState(false)
+export function MerchantSidebar({ merchantName, isOpen, onClose }: MerchantSidebarProps) {
+  const getInitial = (name: string) => name.charAt(0).toUpperCase()
 
   return (
-    <div
-      className={cn(
-        "relative flex flex-col border-l bg-card transition-all duration-300 ease-in-out",
-        isCollapsed ? "w-12" : "w-80"
+    <>
+      {/* Overlay for mobile */}
+      {isOpen && (
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-30 lg:hidden" onClick={onClose} />
       )}
-    >
-      {/* Toggle Button */}
-      <div className="flex h-12 items-center justify-start px-2 border-b">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="h-8 w-8 text-muted-foreground hover:text-foreground"
-          aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-        >
-          {isCollapsed ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-        </Button>
-      </div>
 
-      {/* Content Container */}
-      <div className={cn("flex-1 overflow-y-auto overflow-x-hidden", isCollapsed && "invisible")}>
-        <div className="p-6 space-y-6 min-w-[20rem]">
+      {/* Sidebar */}
+      <div
+        className={`fixed lg:relative top-0 right-0 h-full bg-sidebar border-l border-sidebar-border shadow-xl lg:shadow-none z-40 transition-all duration-300 ease-in-out
+          ${isOpen ? "translate-x-0 w-80 opacity-100" : "translate-x-full lg:translate-x-0 w-0 lg:w-0 opacity-0 lg:opacity-0 overflow-hidden"}
+        `}
+      >
+        <div className="h-full flex flex-col p-6 w-80">
           {/* Header */}
-          <div>
-            <h2 className="text-xl font-semibold text-foreground mb-1 break-words">{merchant.name}</h2>
-            <Badge variant="secondary" className="text-xs">
-              {merchant.category}
-            </Badge>
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-lg font-semibold text-sidebar-foreground">Merchant Details</h2>
+            <Button variant="ghost" size="icon" onClick={onClose} className="lg:hidden text-sidebar-foreground/70">
+              <X className="h-5 w-5" />
+            </Button>
           </div>
 
-          {/* Description */}
-          <div>
-            <h3 className="text-sm font-medium text-foreground mb-2">About</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">{merchant.description}</p>
+          {/* Merchant Profile */}
+          <div className="mb-8 text-center">
+            <div className="w-20 h-20 mx-auto rounded-full bg-sidebar-primary/20 flex items-center justify-center text-sidebar-primary text-3xl font-bold mb-4">
+              {getInitial(merchantName)}
+            </div>
+            <h3 className="font-bold text-xl text-sidebar-foreground">{merchantName}</h3>
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }

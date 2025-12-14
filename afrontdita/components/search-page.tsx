@@ -1,23 +1,17 @@
+
 "use client"
 
 import { useState, useMemo } from "react"
 import { Search, Box } from "lucide-react"
-import Link from "next/link"
 import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
 import { MerchantCard } from "@/components/merchant-card"
 import { Logo } from "@/components/logo"
-
-interface Merchant {
-  id: string
-  name: string
-  category: string
-  description: string
-}
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
 
 interface SearchPageProps {
-  merchants: Merchant[]
-  onMerchantSelect: (merchant: Merchant) => void
+  merchants: string[]
+  onMerchantSelect: (merchantName: string) => void
 }
 
 export function SearchPage({ merchants, onMerchantSelect }: SearchPageProps) {
@@ -27,11 +21,8 @@ export function SearchPage({ merchants, onMerchantSelect }: SearchPageProps) {
     if (!searchQuery.trim()) return merchants
 
     const query = searchQuery.toLowerCase()
-    return merchants.filter(
-      (merchant) =>
-        merchant.name.toLowerCase().includes(query) ||
-        merchant.category.toLowerCase().includes(query) ||
-        merchant.description.toLowerCase().includes(query),
+    return merchants.filter((name) =>
+      name.toLowerCase().includes(query)
     )
   }, [merchants, searchQuery])
 
@@ -51,17 +42,17 @@ export function SearchPage({ merchants, onMerchantSelect }: SearchPageProps) {
           </Link>
         </div>
       </header>
+      .
 
       {/* Main Content */}
       <div className="flex-1 container mx-auto px-4 py-8 max-w-4xl">
         {/* Hero Section */}
         <div className="text-center mb-12 animate-fade-in">
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4 text-balance">
-            Financial Intelligence at Your Fingertips
+            The Merchant Memory you need
           </h2>
           <p className="text-lg text-muted-foreground text-balance max-w-2xl mx-auto">
-            Search for merchants and get AI-powered insights about payment processing, transaction volumes, and business
-            intelligence
+            Get AI-powered memories and insights from conversations with merchants.
           </p>
         </div>
 
@@ -71,7 +62,7 @@ export function SearchPage({ merchants, onMerchantSelect }: SearchPageProps) {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground pointer-events-none" />
             <Input
               type="search"
-              placeholder="Search merchants by name, category, or description..."
+              placeholder="Search merchants by name..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-12 h-14 text-base bg-card shadow-sm border-border focus-visible:ring-2 focus-visible:ring-primary"
@@ -90,9 +81,9 @@ export function SearchPage({ merchants, onMerchantSelect }: SearchPageProps) {
         {/* Merchant List */}
         <div className="space-y-3">
           {filteredMerchants.length > 0 ? (
-            filteredMerchants.map((merchant, index) => (
-              <div key={merchant.id} className="animate-fade-in" style={{ animationDelay: `${0.1 + index * 0.05}s` }}>
-                <MerchantCard merchant={merchant} onClick={() => onMerchantSelect(merchant)} />
+            filteredMerchants.map((merchantName, index) => (
+              <div key={merchantName} className="animate-fade-in" style={{ animationDelay: `${0.1 + index * 0.05}s` }}>
+                <MerchantCard merchantName={merchantName} onClick={() => onMerchantSelect(merchantName)} />
               </div>
             ))
           ) : (
