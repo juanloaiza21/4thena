@@ -1,0 +1,28 @@
+meta {
+  name: queryAthena
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://127.0.0.1:8000/query
+  body: json
+  auth: inherit
+}
+
+headers {
+  accept: application/json
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "prompt_msg": "string",
+    "context": "string",
+    "merchant_id": "string"
+  }
+}
+
+settings {
+  encodeUrl: false
+}

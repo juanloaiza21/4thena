@@ -11,4 +11,4 @@ results*
 data/
 pyrightconfig.json
 data/
-config.yaml
+.env

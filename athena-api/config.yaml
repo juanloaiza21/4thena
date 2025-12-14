@@ -1,0 +1,11 @@
+gemini:
+  embed_model: "gemini-embedding-001"
+  model: "gemini-2.5-flash"
+  max_output_tokens: 2048
+  temperature: 0.9
+  top_p: 1
+  top_k: 1
+milvus:
+  uri: "http://milvus-db:19530"
+  identify_collection: "identifying_msgs_collection"
+  rag_collection: "rag_msgs_collection"

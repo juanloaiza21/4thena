@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "athena_backend_requests",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}
