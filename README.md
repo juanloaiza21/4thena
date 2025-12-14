@@ -3,6 +3,12 @@ Athena is a centralized integration pantheon designed to consume multimedia cont
 
 ___
 
+## Architecture
+
+<img width="1012" height="1041" alt="4thena-container drawio" src="https://github.com/user-attachments/assets/222d2982-b4b9-4cf3-be18-d5276ec8e9dc" />
+
+---
+
 ## Directory Structure
 ```
 .
