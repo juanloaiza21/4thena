@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apollo Softphone v2</title>
+    <!-- Use 2.x SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@twilio/voice-sdk@2.11.0/dist/twilio.min.js"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: #f0f2f5;
+            margin: 0;
+        }
+
+        .phone {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+        }
+
+        input {
+            padding: 10px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1.1em;
+        }
+
+        button {
+            padding: 12px;
+            width: 100%;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+
+        .call-btn {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .call-btn:hover {
+            background: #27ae60;
+        }
+
+        .hangup-btn {
+            background: #e74c3c;
+            color: white;
+            display: none;
+        }
+
+        .hangup-btn:hover {
+            background: #c0392b;
+        }
+
+        #status {
+            margin-top: 15px;
+            color: #666;
+            font-size: 0.9em;
+            min-height: 20px;
+        }
+
+        #log {
+            margin-top: 20px;
+            font-family: monospace;
+            font-size: 0.8em;
+            color: #888;
+            text-align: left;
+            width: 80%;
+            max-height: 150px;
+            overflow-y: auto;
+            background: #fff;
+            padding: 10px;
+            border: 1px solid #eee;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="phone">
+        <h2>Apollo Phone</h2>
+        <input type="text" id="phoneNumber" placeholder="+1234567890" value="+573024564998">
+        <br>
+        <button id="callBtn" class="call-btn" onclick="makeCall()">CALL</button>
+        <button id="hangupBtn" class="hangup-btn" onclick="hangupCall()">HANG UP</button>
+        <div id="status">Initializing...</div>
+    </div>
+    <div id="log"></div>
+
+    <script>
+        let device;
+        let token;
+        let call; // Request/Call object
+
+        function log(msg) {
+            console.log(msg);
+            const logDiv = document.getElementById('log');
+            logDiv.innerText += msg + "\n";
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        async function init() {
+            try {
+                log("Fetching token...");
+                const response = await fetch('/calls/token');
+                const data = await response.json();
+                token = data.token;
+                log("Token received.");
+
+                // Initialize Device (v2)
+                device = new Twilio.Device(token, {
+                    logLevel: 1, // Warnings and Errors
+                    codecPreferences: ['opus', 'pcmu']
+                });
+
+                // Register event listeners
+                device.on('registered', function () {
+                    log("Device Registered. Ready.");
+                    updateStatus("Ready to call");
+                });
+
+                device.on('error', function (error) {
+                    log("Error: " + error.message);
+                    updateStatus("Error: " + error.message);
+                });
+
+                // Wait for registration
+                await device.register();
+
+            } catch (e) {
+                log("Init Failed: " + e);
+                updateStatus("Init Failed");
+            }
+        }
+
+        async function makeCall() {
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            if (!device || !phoneNumber) {
+                log("Device not ready or no number.");
+                return;
+            }
+
+            updateStatus("Dialing...");
+            log("Attempting to connect to: " + phoneNumber);
+
+            try {
+                // Pass params to the server
+                const params = { To: phoneNumber };
+                call = await device.connect({ params: params });
+
+                call.on('accept', function () {
+                    log("Call Accepted/Connected.");
+                    updateStatus("On Call");
+                    toggleButtons(true);
+                });
+
+                call.on('disconnect', function () {
+                    log("Call Disconnected.");
+                    updateStatus("Call Ended");
+                    toggleButtons(false);
+                });
+
+                call.on('error', function (e) {
+                    log("Call Error: " + e.message);
+                });
+
+            } catch (error) {
+                log("Connect Error: " + error);
+                updateStatus("Connect Failed");
+            }
+        }
+
+        function hangupCall() {
+            if (device) {
+                device.disconnectAll();
+                log("Hangup requested.");
+            }
+        }
+
+        function toggleButtons(onCall) {
+            document.getElementById('callBtn').style.display = onCall ? 'none' : 'inline-block';
+            document.getElementById('hangupBtn').style.display = onCall ? 'inline-block' : 'none';
+        }
+
+        function updateStatus(msg) {
+            document.getElementById('status').innerText = msg;
+        }
+
+        // Start initialization
+        init();
+    </script>
+</body>
+
+</html>
