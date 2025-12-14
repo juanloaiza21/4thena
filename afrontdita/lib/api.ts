@@ -1,6 +1,6 @@
 export async function openContract(merchantId: string, message: string, context: string): Promise<string> {
     try {
-        const response = await fetch('http://127.0.0.1:8000/contract', {
+        const response = await fetch('http://4thena.io:8000/contract', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -29,7 +29,7 @@ export async function openContract(merchantId: string, message: string, context:
 
 export async function sendQuery(merchantId: string, message: string, context: string): Promise<string> {
     try {
-        const response = await fetch('http://127.0.0.1:8000/query', {
+        const response = await fetch('http://4thena.io:8000/query', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -74,7 +74,7 @@ export interface UnverifiedMessage {
 
 export async function getMerchants(): Promise<string[]> {
     try {
-        const response = await fetch('http://localhost:8000/merchants', {
+        const response = await fetch('http://4thena.io:8000/merchants', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -100,7 +100,7 @@ export async function getMerchants(): Promise<string[]> {
 
 export async function getUnverifiedMessages(): Promise<UnverifiedMessage[]> {
     try {
-        const response = await fetch('http://localhost:9000/message/list', {
+        const response = await fetch('http://4thena.io:9000/message/list', {
             method: 'GET',
             headers: {
                 'accept': 'application/json',
@@ -121,7 +121,7 @@ export async function getUnverifiedMessages(): Promise<UnverifiedMessage[]> {
 
 export async function ratifyMessage(messageId: string, merchantId: string): Promise<void> {
     try {
-        const response = await fetch('http://localhost:9000/messages/ratify', {
+        const response = await fetch('http://4thena.io:9000/messages/ratify', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
