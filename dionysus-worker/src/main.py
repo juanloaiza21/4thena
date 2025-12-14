@@ -5,7 +5,6 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from src.core.database.session import connect_to_mongo, close_mongo_connection
 from src.core.nats import NatsConnection
-from src.message.message_worker import MessageWorker
 from src.nats.nats_consumer import NatsConsumer
 from src.core.database.session import get_database
 
@@ -26,7 +25,6 @@ async def lifespan(app: FastAPI):
 
     yield
 
-    await worker.stop()
     await nats.close()
     await close_mongo_connection()
 
