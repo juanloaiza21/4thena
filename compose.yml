@@ -112,9 +112,9 @@ services:
     networks:
       - 4thena-network
 
-  dionysus-worker:
+  dionysus-api:
     build:
-      context: dionysus-worker
+      context: dionysus-api
     environment:
       - MONGO_URI=${MONGO_URI}
       - MONGO_NAME=${MONGO_NAME}
