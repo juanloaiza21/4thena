@@ -1,0 +1,75 @@
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+from nats.aio.client import Client as NATS
+from contextlib import asynccontextmanager
+import json
+
+# Pydantic models
+class MessageContent(BaseModel):
+    message_id: str
+    text: str
+    timestamp: str
+    direction: str
+    from_: str
+    to: str
+    is_bussiness_account: bool
+    message_type: str
+    has_media: bool
+    language_hint: str | None
+
+class CreateMessageDto(BaseModel):
+    source: str
+    merchantId: str
+    content: MessageContent
+
+# NATS client instance
+nats_client = NATS()
+
+# Lifespan context manager for startup/shutdown
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: Connect to NATS
+    await nats_client.connect(servers=["nats://127.0.0.1:4222"])
+    print("✅ Connected to NATS")
+    yield
+    # Shutdown: Close NATS connection
+    await nats_client.close()
+    print("👋 NATS connection closed")
+
+# Create FastAPI app
+app = FastAPI(lifespan=lifespan)
+
+@app.post("/message")
+async def send_message():
+    payload = CreateMessageDto(
+        source="whatsapp",
+        merchantId="596c05133f6ee19c0cffc879",
+        content=MessageContent(
+            message_id="false_573174799575@c.us_3EB08B26CF5E487BDCA074",
+            text="mongodb+srv://david_ramirez:jGOBwHLzxXB66riq@cluster0.1yxg9yt.mongodb.…",
+            timestamp="1765662320",
+            direction="incoming",
+            from_="573174799575@c.us",
+            to="573105767451@c.us",
+            is_bussiness_account=False,
+            message_type="chat",
+            has_media=False,
+            language_hint=None
+        )
+    )
+    
+    try:
+        # Publish to NATS
+        await nats_client.publish(
+            "hera.new.msgs",
+            json.dumps(payload.dict()).encode()
+        )
+        print("📤 Message sent to NATS")
+        return {"status": "success", "message": "Message sent to NATS"}
+    except Exception as e:
+        print(f"❌ Failed to send message: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy", "nats_connected": nats_client.is_connected}

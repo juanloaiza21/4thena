@@ -1,0 +1,22 @@
+meta {
+  name: hephaseus-ratify
+  type: http
+  seq: 14
+}
+
+post {
+  url: http://localhost:8000/messages/ratify
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "messageId": "693e7c28cd168800c0b5d17e"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
