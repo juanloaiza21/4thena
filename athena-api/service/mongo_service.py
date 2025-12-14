@@ -7,13 +7,13 @@ from manager.load_config import CONFIG
 client = None
 
 def get_db():
+    db_name = os.getenv("MONGO_DB_NAME", "athena_db")
     global client
     if client is not None:
-        return client
+        return client[db_name]
 
     print(f"{Fore.BLUE}Attempting connection to mongo")
     mongo_uri = os.getenv("MONGO_URI")
-    db_name = os.getenv("MONGO_DB_NAME", "athena_db")
     client = MongoClient(mongo_uri)
     print(f"{Fore.GREEN}Mongo connection established")
     return client[db_name]
