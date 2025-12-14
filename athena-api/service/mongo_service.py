@@ -48,17 +48,19 @@ def getContractMessages(merchant_id: str):
     
     merchant_col = db[collection_name]
     
-    print("finding all msgs in merchant")
-    cursor = merchant_col.find({}, {"msg_id": 1, "_id": 0})
-    msg_ids = [doc['msg_id'] for doc in cursor if 'msg_id' in doc]
+    print(f"finding all msgs in merchant {collection_name}")
+    cursor = merchant_col.find({})
+    msg_ids = [doc['msg_id'] for doc in cursor]
+    print(msg_ids)
     
     messages_col = db["messages"]
     
     print("iterating over messages to extract them")
     results = []
     if msg_ids:
-        messages_cursor = messages_col.find({"msg_id": {"$in": [ObjectId(mid) for mid in msg_ids]}})
+        messages_cursor = messages_col.find({"_id": {"$in": [ObjectId(mid) for mid in msg_ids]}})
         for msg in messages_cursor:
+            print(msg)
             results.append(msg["txt"])
         
     print("\n--- CONTRACT MESSAGES ---")

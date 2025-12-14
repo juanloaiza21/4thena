@@ -7,7 +7,7 @@ router = APIRouter()
 @router.post("/contract")
 async def contract_endpoint(background_tasks: BackgroundTasks, merchant_id: str):
     try:
-        return buildContract(background_tasks, merchant_id)
+        return await buildContract(background_tasks, merchant_id)
     except Exception as e:
         print(f"Error in /contract: {e}")
         raise HTTPException(status_code=500, detail=str(e))

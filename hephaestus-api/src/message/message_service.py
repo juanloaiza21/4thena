@@ -28,7 +28,7 @@ class MessageService(BaseService):
         # Mark as ratified in database and update merchant_id
         await repository.mark_as_ratified(msg_id, merchant_id)
         
-        # Save msgId to merchant's collection
+        # Save msg_id to merchant's collection
         await merchant_repo.add_message(merchant_id, msg_id)
         
         # Update ratified status for NATS

@@ -14,7 +14,7 @@ class MerchantRepository:
     async def add_message(self, merchant_id: str, msg_id: str):
         """Add a message ID to the merchant's collection"""
         collection = self._get_collection(merchant_id)
-        result = await collection.insert_one({"msgId": msg_id})
+        result = await collection.insert_one({"msg_id": msg_id})
         return str(result.inserted_id)
 
     async def get_messages(self, merchant_id: str):
@@ -22,4 +22,4 @@ class MerchantRepository:
         collection = self._get_collection(merchant_id)
         cursor = collection.find({})
         documents = await cursor.to_list(length=None)
-        return [doc["msgId"] for doc in documents]
+        return [doc["msg_id"] for doc in documents]
