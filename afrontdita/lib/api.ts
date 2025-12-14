@@ -128,7 +128,7 @@ export async function getUnverifiedMessages(): Promise<UnverifiedMessage[]> {
 
 export async function ratifyMessage(messageId: string, merchantId: string): Promise<void> {
     try {
-        const response = await fetch('http://4thena.io:9000/messages/ratify', {
+        const response = await fetch('http://4thena.io:9000/message/ratify', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
