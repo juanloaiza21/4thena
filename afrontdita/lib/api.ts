@@ -69,7 +69,7 @@ export interface UnverifiedMessage {
 
 export async function getUnverifiedMessages(): Promise<UnverifiedMessage[]> {
     try {
-        const response = await fetch('http://localhost:9000/messages/list', {
+        const response = await fetch('http://localhost:9000/message/list', {
             method: 'GET',
             headers: {
                 'accept': 'application/json',
@@ -90,7 +90,7 @@ export async function getUnverifiedMessages(): Promise<UnverifiedMessage[]> {
 
 export async function ratifyMessage(messageId: string, merchantId: string): Promise<void> {
     try {
-        const response = await fetch('http://localhost:9000/messages/ratify', {
+        const response = await fetch('http://localhost:9000/message/ratify', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
