@@ -1,0 +1,8 @@
+milvus:
+  uri: "http://milvus-db:19530"
+  identify_collection: "identifying_msgs_collection"
+  rag_collection: "rag_msgs_collection"
+nats:
+  server: "nats://nats-mq:4222"
+  #servers: ["nats://172.26.2.70:4222"]
+  consumer_subject: "hera.predict.id"

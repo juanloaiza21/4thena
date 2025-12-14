@@ -49,20 +49,22 @@ class NATSConsumer:
         data = msg.data.decode()
         print(f"{Fore.CYAN}[{subject}] {data}")
 
+        json_data = json.loads(data)
+
         embedding = self.merchant_id_identifier.identifyMerchantIdEmbedding(data)
 
         res = await self.milvus_client.search(embedding)
 
         if res is None or len(res) == 0 or len(res[0]) == 0:
             print(f"{Fore.RED}Error: milvus empty or couldn't query")
-            await self.nats_producer.publish("NAN")
+            await self.nats_producer.publish("{'msg_id': '"+json_data['id']+"', 'merchant_id': 'NAN'}")
             return
 
         merchant_id_list = [m.merchant_id for m in res[0]]  # type: ignore
 
         if not merchant_id_list:
             print(f"{Fore.GREEN}Vector DB is empty")
-            await self.nats_producer.publish("NAN")
+            await self.nats_producer.publish("{'msg_id': '"+json_data['id']+"', 'merchant_id': 'NAN'}")
             return
 
         merchant_id_list = np.array(merchant_id_list)
@@ -71,8 +73,7 @@ class NATSConsumer:
 
         print(f"{Fore.GREEN}The predicted merchant id is: {mode}")
 
-        json_data = json.loads(data)
-        json_producer_msg = {"merchantId": str(mode), "msgId": json_data["msgId"]}
+        json_producer_msg = {"merchant_id": str(mode), "msg_id": json_data["msgId"]}
 
         await self.nats_producer.publish(json.dumps(json_producer_msg))
         return

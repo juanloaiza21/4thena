@@ -6,26 +6,18 @@ import json
 
 import traceback
 
-from milvus.milvus import Milvus
-from service.merchant_id_identifier import MerchantIDIdentifier
-from service.summarizer import Summarizer
 
+from mongo import mongo
 
 class NATSConsumer:
     def __init__(
         self,
         server: str,
-        subject: str,
-        milvus_client: Milvus,
-        merchant_id_identifier: MerchantIDIdentifier,
-        summarizer: Summarizer
+        subject: str
     ):
         self.server = server
         self.subject = subject
         self.nc = None
-        self.milvus_client = milvus_client
-        self.merchant_id_identifier = merchant_id_identifier
-        self.summarizer = summarizer
 
         self.queue: asyncio.Queue = asyncio.Queue()
 
@@ -49,13 +41,8 @@ class NATSConsumer:
 
         json_data = json.loads(data)
 
-        identify_vector = self.merchant_id_identifier.identifyMerchantIdEmbedding(data)
-        rag_vector = self.summarizer.summarizeEmbedding(data)
-
-        print(json_data)
-
-        await self.milvus_client.insertIdentify(identify_vector, json_data["merchant_id"], json_data["_id"])
-        await self.milvus_client.insertRag(rag_vector, json_data["merchant_id"], json_data["_id"])
+        mongo.updateMessageMerchantId(json_data["merchant_id"], json_data["msg_id"])
+        
 
     async def worker(self):
         while True:
@@ -78,7 +65,6 @@ class NATSConsumer:
         print(f"{Fore.GREEN}Subscribed to: {self.subject}")
 
     async def run(self):
-        await self.milvus_client.connect()
         await self.connect()
         await self.subscribe()
 
