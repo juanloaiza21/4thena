@@ -1,14 +1,21 @@
 export async function openContract(merchantId: string, message: string, context: string): Promise<string> {
     try {
-        const response = await fetch('http://4thena.io:8000/contract', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                merchant_id: merchantId,
-            }),
-        })
+        const response = await fetch(
+            `http://4thena.io:8000/contract?merchant_id=${encodeURIComponent(merchantId)}`,
+            {
+                method: "POST",
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+            }
+        )
+
+        // const response = await fetch('http://127.0.0.1:8000/contract', {
+        //     method: 'POST',
+        //     body: JSON.stringify({
+        //         merchant_id: merchantId,
+        //     }),
+        // })
       
         console.log(response)
 
@@ -121,7 +128,7 @@ export async function getUnverifiedMessages(): Promise<UnverifiedMessage[]> {
 
 export async function ratifyMessage(messageId: string, merchantId: string): Promise<void> {
     try {
-        const response = await fetch('http://4thena.io:9000/messages/ratify', {
+        const response = await fetch('http://4thena:9000/messages/ratify', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
