@@ -10,9 +10,10 @@ import { WhatsappModule } from './whatsapp/whatsapp.module';
 import { NatsModule } from './nats/nats.module';
 
 import { EmailsModule } from './emails/emails.module';
+import { TwilioModule } from './twilio/twilio.module';
 
 @Module({
-  imports: [AppConfigModule, DatabaseModule, WhatsappModule, NatsModule, EmailsModule],
+  imports: [AppConfigModule, DatabaseModule, WhatsappModule, NatsModule, EmailsModule, TwilioModule],
   controllers: [AppController],
   providers: [AppService, DatabaseService],
 })
