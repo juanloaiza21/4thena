@@ -9,7 +9,7 @@ from src.message.message_dto import RatifyMessageDto
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from src.core.nats import NatsConnection
 
-router = APIRouter(prefix="/messages", tags=["Messages"])
+router = APIRouter(prefix="/message", tags=["Messages"])
 controller = Controller(router)
 
 
@@ -27,7 +27,7 @@ class MessageController:
         """
         Ratify a message
         """
-        return await self.service.ratify_message(body.message_id)
+        return await self.service.ratify_message(body.message_id, body.merchant_id)
 
     @controller.route.get("/list", responses={200: {"description": "List of messages"}})
     async def list_messages(self):

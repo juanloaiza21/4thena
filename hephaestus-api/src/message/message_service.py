@@ -11,8 +11,8 @@ class MessageService(BaseService):
         super().__init__(database)
         self.nats = nats
 
-    async def ratify_message(self, msg_id: str):
-        """Ratify a message: get data, mark in DB, save to merchant collection, and publish to NATS"""
+    async def ratify_message(self, msg_id: str, merchant_id: str):
+        """Ratify a message: get data, update merchant_id, mark in DB, save to merchant collection, and publish to NATS"""
         repository = MessageRepository(self.database)
         merchant_repo = MerchantRepository(self.database)
         
@@ -22,12 +22,11 @@ class MessageService(BaseService):
         if not message_data:
             return {"error": "Message not found", "message_id": msg_id}
             
-        merchant_id = message_data.get("merchantId")
-        if not merchant_id:
-             return {"error": "Message does not have a merchantId", "message_id": msg_id}
+        # Update merchant_id in message data since we are setting it now
+        message_data["merchant_id"] = merchant_id
         
-        # Mark as ratified in database
-        await repository.mark_as_ratified(msg_id)
+        # Mark as ratified in database and update merchant_id
+        await repository.mark_as_ratified(msg_id, merchant_id)
         
         # Save msgId to merchant's collection
         await merchant_repo.add_message(merchant_id, msg_id)
