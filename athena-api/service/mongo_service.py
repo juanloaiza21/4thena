@@ -61,3 +61,12 @@ def getContractMessages(merchant_id: str):
     print("-------------------------\n")
     
     return results
+
+def getMerchants():
+    db = get_db()
+    collections = db.list_collection_names()
+
+    merchants = [col for col in collections if col != "messages"]
+
+    return merchants
+
