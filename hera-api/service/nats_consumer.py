@@ -2,6 +2,7 @@ import asyncio
 import nats
 from nats.errors import NoServersError
 from colorama import Fore
+import json
 
 import traceback
 
@@ -70,7 +71,10 @@ class NATSConsumer:
 
         print(f"{Fore.GREEN}The predicted merchant id is: {mode}")
 
-        await self.nats_producer.publish(str(mode))
+        json_data = json.loads(data)
+        json_producer_msg = {"merchantId": str(mode), "msgId": json_data["msgId"]}
+
+        await self.nats_producer.publish(json.dumps(json_producer_msg))
         return
 
     async def worker(self):

@@ -49,7 +49,7 @@ services:
   hermes-api:
     env_file: hermes-api/.env
     build:
-      context: integration-api
+      context: hermes-api
     ports:
       - 9000:8000
     networks:
