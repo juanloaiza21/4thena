@@ -93,7 +93,7 @@ async def process_message(prompt_msg: str, context: str, merchant_id: str):
             full_context += "\n"+msg
         full_context = full_context.strip()
 
-        full_context += "\n--- GIVEN THE PREVIOUS INFORMATION ANSWER THE FOLLOWING PROMPT ---"+prompt_msg
+        full_context += "\n--- GIVEN THE PREVIOUS INFORMATION ANSWER THE FOLLOWING PROMPT ---"+prompt_msg+"\n--- THE FOLLOWING IS THE MERCHANT NAME ---\n"+merchant_id
         full_context = full_context.strip()
 
         print(f"{Fore.BLUE} Generating full response with rag retrieval")
